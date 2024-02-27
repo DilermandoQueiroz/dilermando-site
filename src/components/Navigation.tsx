@@ -8,9 +8,9 @@ const Navigation: React.FC = () => {
 
     return (
         <div className="w-full pt-14 justify-center items-start gap-6 inline-flex">
-            <a href="/" className={`text-2xl cursor-pointer hover:-translate-y-1 transition-transform ${isActive('/')}`}>Home</a>
-            <a href="/blog" className={`text-2xl cursor-pointer hover:-translate-y-1 transition-transform ${isActive('/blog')}`}>Blog</a>
-            <a href="/contact" className={`text-2xl cursor-pointer hover:-translate-y-1 transition-transform ${isActive('/contact')}`}>Contact</a>
+            <a href="/" className={`text-xl cursor-pointer hover:-translate-y-1 transition-transform ${isActive('/')}`}>Home</a>
+            <a href="/blog" className={`text-xl cursor-pointer hover:-translate-y-1 transition-transform ${isActive('/blog')}`}>Blog</a>
+            <a href="/contact" className={`text-xl cursor-pointer hover:-translate-y-1 transition-transform ${isActive('/contact')}`}>Contact</a>
         </div>
     );
 };
