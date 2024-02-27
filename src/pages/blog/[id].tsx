@@ -12,15 +12,15 @@ import { Modal } from 'react-notion-x/build/third-party/modal'
 import { Pdf } from 'react-notion-x/build/third-party/pdf'
 import Navigation from "@/components/Navigation";
 
-export async function getStaticPaths() {
-    // Fetch your list of pages from Notion or define static paths
-    const paths = [{ params: { id: 'your-notion-page-id' } }]; // Replace with actual page IDs
+// export async function getStaticPaths() {
+//     // Fetch your list of pages from Notion or define static paths
+//     const paths = [{ params: { id: 'your-notion-page-id' } }]; // Replace with actual page IDs
 
-    return {
-        paths,
-        fallback: 'blocking', // or true, depending on your requirement
-    };
-}
+//     return {
+//         paths,
+//         fallback: 'blocking', // or true, depending on your requirement
+//     };
+// }
 
 export async function getStaticProps({ params }: { params: any }) {
     const { id } = params;

@@ -4,10 +4,8 @@ import Publication from "@/components/Publication";
 
 import { NotionAPI } from 'notion-client';
 
-import { getBlockTitle, getPageProperty, getPageTitle } from 'notion-utils';
-import Link from "next/link";
-import { Key, ReactElement, JSXElementConstructor, ReactNode, ReactPortal, PromiseLikeOfReactNode } from "react";
-import { getBlogLink, getDateStr } from "@/lib/blog-helpers";
+import { getBlockTitle, getPageProperty } from 'notion-utils';
+import { getDateStr } from "@/lib/blog-helpers";
 
 export async function getStaticProps({ }) {
   const notion = new NotionAPI({
@@ -62,7 +60,7 @@ export default function Home({ posts, recordMap }: { posts: any[]; recordMap: an
       <Navigation />
       <Title />
       {posts.length === 0 ? (
-        <p className="">There are no posts yet</p>
+        <p className="w-full h-full flex justify-center items-center">There are no posts yet</p>
       ) : (
         posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
           .map((post: { id: string; title: string; date: string | number | Date; }) => (
