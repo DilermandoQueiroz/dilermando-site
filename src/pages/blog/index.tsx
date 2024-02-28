@@ -24,7 +24,7 @@ export async function getStaticProps({ }) {
   const queryResults = collectionQuery[firstCollectionId][firstViewId];
   const blockIds = queryResults.collection_group_results?.blockIds || [];
   
-  let posts: { id: string; title: any; author: any; date: any}[] = [];
+  let posts: { id: string; title: any; author: any; date: any; image: any}[] = [];
 
   blockIds.forEach(async (blockId: string) => {
       const block = recordMap.block[blockId].value;
@@ -32,6 +32,7 @@ export async function getStaticProps({ }) {
         const date = getPageProperty('Date', block, recordMap)
         const published = getPageProperty('Published', block, recordMap)
         const name = getPageProperty('Authors', block, recordMap)
+        const image = getPageProperty('image', block, recordMap)
         // remove - from the name
         const pageId = blockId.replace(/-/g, ''); 
         
@@ -41,6 +42,7 @@ export async function getStaticProps({ }) {
             title: title,
             author: name,
             date: date,
+            image: image
           });
         }
   });
@@ -63,11 +65,12 @@ export default function Home({ posts, recordMap }: { posts: any[]; recordMap: an
         <p className="w-full h-full flex justify-center items-center">There are no posts yet</p>
       ) : (
         posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .map((post: { id: string; title: string; date: string | number | Date; }) => (
+          .map((post: { id: string; title: string; date: string | number | Date; image: string }) => (
             <Publication
               id={post.id}
               title={post.title}
               date={getDateStr(post.date)}
+              image={post.image}
             />
           ))
       )}
