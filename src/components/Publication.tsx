@@ -12,7 +12,7 @@ const Publication: React.FC<PublicationProps> = ({ title, date, id, image}) => {
     return (
         <div className="flex justify-center items-center w-full">
             <Link href={`/blog/${id}`}>
-            <div className="max-w-5xl p-5 border-b border-black flex flex-col justify-center items-center">
+            <div className="border-b border-black flex flex-col justify-center items-center">
                 <img className="w-86 h-86" src={image.toString()} alt="Publication" />
                 <div className="w-full mt-5">
                     <div className="text-black text-3xl font-semibold">{title}</div>
