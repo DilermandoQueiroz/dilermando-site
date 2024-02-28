@@ -60,7 +60,7 @@ export default function Home({ posts, recordMap }: { posts: any[]; recordMap: an
   return (
     <>
       <Navigation />
-      <Title />
+      <Title title="Research"/>
       {posts.length === 0 ? (
         <p className="w-full h-full flex justify-center items-center">There are no posts yet</p>
       ) : (
