@@ -1,6 +1,9 @@
 import { NotionAPI } from "notion-client";
 import { NotionRenderer } from "react-notion-x";
 import { getPageProperty } from 'notion-utils';
+import Image from 'next/image'
+import Link from 'next/link'
+
 
 import 'react-notion-x/src/styles.css'
 import 'prismjs/themes/prism-tomorrow.css'
@@ -77,7 +80,15 @@ export default function NotionPage({ recordMap }: { recordMap: any }) {
     return (
         <>
         <Navigation/>
-        <NotionRenderer recordMap={recordMap} fullPage={true} darkMode={false} disableHeader={true} />
+        <NotionRenderer 
+        recordMap={recordMap}
+        fullPage={true}
+        darkMode={false}
+        disableHeader={true}
+        components={{
+          nextImage: Image,
+          nextLink: Link
+        }}/>
         </>
     );
 }
