@@ -1,6 +1,6 @@
 import { NotionAPI } from "notion-client";
 import { NotionRenderer } from "react-notion-x";
-import { getPageProperty } from 'notion-utils';
+import { getPageProperty, getPageTitle } from 'notion-utils';
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -15,6 +15,7 @@ import { Equation } from 'react-notion-x/build/third-party/equation'
 import { Modal } from 'react-notion-x/build/third-party/modal'
 import { Pdf } from 'react-notion-x/build/third-party/pdf'
 import Navigation from "@/components/Navigation";
+import Title from "@/components/Title";
 
 export async function getStaticPaths() {
     const notion = new NotionAPI({
@@ -67,22 +68,26 @@ export async function getStaticProps({ params }: { params: any }) {
     });
     
     const recordMap = await notion.getPage(id);
+    
+    const title = getPageTitle(recordMap);
 
     return {
         props: {
             recordMap: recordMap,
+            title: title
         },
         revalidate: 10,
     }
 }
 
-export default function NotionPage({ recordMap }: { recordMap: any }) {
+export default function NotionPage({ recordMap, title }: { recordMap: any; title: string }) {
     return (
         <>
         <Navigation/>
+        <Title title={title}/>
         <NotionRenderer 
         recordMap={recordMap}
-        fullPage={true}
+        fullPage={false}
         darkMode={false}
         disableHeader={true}
         components={{
