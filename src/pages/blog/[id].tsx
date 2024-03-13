@@ -16,6 +16,7 @@ import { Modal } from 'react-notion-x/build/third-party/modal'
 import { Pdf } from 'react-notion-x/build/third-party/pdf'
 import Navigation from "@/components/Navigation";
 import Title from "@/components/Title";
+import { getDateStr } from "@/lib/blog-helpers";
 
 export async function getStaticPaths() {
     const notion = new NotionAPI({
@@ -60,31 +61,58 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: { params: any }) {
-    const { id } = params;
+  const { id } = params;
 
-    const notion = new NotionAPI({
-        activeUser: process.env.NOTION_ACTIVE_USER,
-        authToken: process.env.NOTION_TOKEN
-    });
-    
-    const recordMap = await notion.getPage(id);
-    
-    const title = getPageTitle(recordMap);
+  const notion = new NotionAPI({
+      activeUser: process.env.NOTION_ACTIVE_USER,
+      authToken: process.env.NOTION_TOKEN
+  });
 
-    return {
-        props: {
-            recordMap: recordMap,
-            title: title
-        },
-        revalidate: 10,
+  const recordMap = await notion.getPage(id);
+  const title = getPageTitle(recordMap);
+
+  const blogIndexId = process.env.BLOG_INDEX_ID || ""
+  const recordMapTable = await notion.getPage(blogIndexId);
+  const collectionQuery = recordMapTable.collection_query;
+  const firstCollectionId = Object.keys(collectionQuery)[0];
+  const firstViewId = Object.keys(collectionQuery[firstCollectionId])[0];
+  const queryResults = collectionQuery[firstCollectionId][firstViewId];
+  const blockIds = queryResults.collection_group_results?.blockIds || [];
+
+  let authors = '';
+  let date = '';
+  let paperLink = '';
+
+  for (const blockId of blockIds) {
+    const block = recordMapTable.block[blockId]?.value;
+    const pageId = blockId.replace(/-/g, '');
+
+    if (pageId === id) {
+      authors = getPageProperty('Authors', block, recordMapTable);
+      date = getPageProperty('Date', block, recordMapTable);
+      paperLink = getPageProperty('PaperLink', block, recordMapTable);
+      break;
     }
+  }
+
+  return {
+    props: {
+      recordMap: recordMap,
+      title: title,
+      authors: authors,
+      date: date,
+      paperLink: paperLink
+    },
+    revalidate: 10,
+  }
 }
 
-export default function NotionPage({ recordMap, title }: { recordMap: any; title: string }) {
+
+export default function NotionPage({ recordMap, title, authors, date, paperLink }: { recordMap: any; title: string, authors: string, date: string, paperLink: string}) {
     return (
         <>
         <Navigation/>
-        <Title title={title}/>
+        <Title title={title} authors={authors} date={getDateStr(date)} paperLink={paperLink}/>
         <div className="text-justify">
           <NotionRenderer 
           recordMap={recordMap}
