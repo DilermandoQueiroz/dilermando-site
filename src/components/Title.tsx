@@ -9,7 +9,7 @@ interface TitleProps {
 
 const Title: React.FC<TitleProps> = ({ title, authors, date, paperLink }) => {
     return (
-        <div className="flex flex-col justify-center items-center w-full h-full py-36 px-2">
+        <div className="flex flex-col justify-center items-center w-full h-full py-24 sm:py-36 px-2">
             <div className="text-center text-4xl font-bold max-w-5xl">{title}</div>
             <div className="text-center pt-12 max-w-2xl">{authors}</div>
             <div className="text-center pt-2">{date}</div>
