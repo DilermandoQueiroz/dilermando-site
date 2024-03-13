@@ -85,15 +85,17 @@ export default function NotionPage({ recordMap, title }: { recordMap: any; title
         <>
         <Navigation/>
         <Title title={title}/>
-        <NotionRenderer 
-        recordMap={recordMap}
-        fullPage={false}
-        darkMode={false}
-        disableHeader={true}
-        components={{
-          nextImage: Image,
-          nextLink: Link
-        }}/>
+        <div className="text-justify">
+          <NotionRenderer 
+          recordMap={recordMap}
+          fullPage={false}
+          darkMode={false}
+          disableHeader={true}
+          components={{
+            nextImage: Image,
+            nextLink: Link
+          }}/>
+        </div>
         </>
     );
 }
