@@ -5,7 +5,12 @@ import Link from 'next/link';
 const Navigation: React.FC = () => {
     const router = useRouter();
 
-    const isActive = (pathname: string) => router.pathname === pathname ? 'text-blue-500' : 'text-neutral-500';
+    const isActive = (pathname: string) => {
+        if (pathname === '/blog') {
+            return router.pathname.startsWith('/blog') ? 'text-blue-500' : 'text-neutral-500';
+        }
+        return router.pathname === pathname ? 'text-blue-500' : 'text-neutral-500';
+    };
 
     return (
         <div className="w-full pt-14 justify-center items-start gap-6 inline-flex">
