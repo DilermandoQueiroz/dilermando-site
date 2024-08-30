@@ -16,8 +16,8 @@ const Title: React.FC<TitleProps> = ({ title, authors, date, paperLink }) => {
             {paperLink && (
                 <div className="text-center">
                     <a href={paperLink}>
-                        <div className="w-48 h-14 px-14 py-3.5 rounded-3xl border border-black justify-center items-center inline-flex hover:text-white hover:bg-black transition-all duration-300">
-                            <div className="text-xl">Paper</div>
+                        <div className="w-48 h-14 rounded-3xl border border-black justify-center items-center inline-flex hover:text-white hover:bg-black transition-all duration-300">
+                            <div className="text-xl">Read paper ↗︎</div>
                         </div>
                     </a>
                 </div>
