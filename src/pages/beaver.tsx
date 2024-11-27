@@ -3,28 +3,18 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [position, setPosition] = useState({ left: 50, top: 50 });
   const [clicked, setClicked] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => {
-    // Detecta se o dispositivo é móvel
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    if (/android|iphone|ipad|mobile/i.test(userAgent)) {
-      setIsMobile(true);
-    }
-  }, []);
-
-  // Função para movimentar o botão
   useEffect(() => {
     if (!clicked) {
       const interval = setInterval(() => {
-        const newLeft = Math.random() * (window.innerWidth - 80); // Ajuste para o tamanho do emoji
-        const newTop = Math.random() * (window.innerHeight - 80); // Ajuste para o tamanho do emoji
+        const newLeft = Math.random() * (window.innerWidth - 80);
+        const newTop = Math.random() * (window.innerHeight - 80);
         setPosition({ left: newLeft, top: newTop });
-      }, isMobile ? 200 : 400); // Movimenta mais rápido no celular e no desktop
+      }, 300);
 
       return () => clearInterval(interval);
     }
-  }, [clicked, isMobile]);
+  }, [clicked]);
 
   const handleClick = () => {
     setClicked(true);
@@ -48,7 +38,7 @@ export default function Home() {
         </button>
       ) : (
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-green-500">🎉 Feliz aniversario! 🎉</h1>
+          <h1 className="text-2xl font-bold text-green-500">🎉 Feliz aniversário! 🎉</h1>
           <p className="text-lg mt-2">Eu te amo muito 🦦❤️!</p>
         </div>
       )}
