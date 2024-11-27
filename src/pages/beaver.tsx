@@ -3,19 +3,28 @@ import { useState, useEffect } from "react";
 export default function Home() {
   const [position, setPosition] = useState({ left: 50, top: 50 });
   const [clicked, setClicked] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Função para movimentar o botão constantemente
+  useEffect(() => {
+    // Detecta se o dispositivo é móvel
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    if (/android|iphone|ipad|mobile/i.test(userAgent)) {
+      setIsMobile(true);
+    }
+  }, []);
+
+  // Função para movimentar o botão
   useEffect(() => {
     if (!clicked) {
       const interval = setInterval(() => {
-        const newLeft = Math.random() * (window.innerWidth - 120); // Subtraímos 120 para o botão não sair da tela
-        const newTop = Math.random() * (window.innerHeight - 60); // Subtraímos 60 para o botão não sair da tela
+        const newLeft = Math.random() * (window.innerWidth - 120);
+        const newTop = Math.random() * (window.innerHeight - 60);
         setPosition({ left: newLeft, top: newTop });
-      }, 1000); // Movimenta a cada 1 segundo
+      }, isMobile ? 500 : 1000); // Movimenta mais rápido no celular
 
-      return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+      return () => clearInterval(interval);
     }
-  }, [clicked]);
+  }, [clicked, isMobile]);
 
   const handleClick = () => {
     setClicked(true);
@@ -36,8 +45,8 @@ export default function Home() {
         </button>
       ) : (
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-green-500">🎉 Feliz aniversario! 🎉</h1>
-          <p className="text-lg mt-2">Eu te amo muito🦦❤️!</p>
+          <h1 className="text-2xl font-bold text-green-500">🎉 Parabéns! 🎉</h1>
+          <p className="text-lg mt-2">Você conseguiu clicar no botão secreto!</p>
         </div>
       )}
     </div>
