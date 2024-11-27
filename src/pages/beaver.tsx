@@ -17,10 +17,10 @@ export default function Home() {
   useEffect(() => {
     if (!clicked) {
       const interval = setInterval(() => {
-        const newLeft = Math.random() * (window.innerWidth - 120);
-        const newTop = Math.random() * (window.innerHeight - 60);
+        const newLeft = Math.random() * (window.innerWidth - 80); // Ajuste para o tamanho do emoji
+        const newTop = Math.random() * (window.innerHeight - 80); // Ajuste para o tamanho do emoji
         setPosition({ left: newLeft, top: newTop });
-      }, isMobile ? 500 : 1000); // Movimenta mais rápido no celular
+      }, isMobile ? 200 : 400); // Movimenta mais rápido no celular e no desktop
 
       return () => clearInterval(interval);
     }
@@ -35,18 +35,21 @@ export default function Home() {
       {!clicked ? (
         <button
           onClick={handleClick}
-          className="absolute px-4 py-2 text-white bg-blue-500 hover:bg-blue-700 rounded transition-all"
+          className="absolute text-4xl"
           style={{
             left: `${position.left}px`,
             top: `${position.top}px`,
+            background: "none",
+            border: "none",
+            cursor: "pointer",
           }}
         >
-          Botão Secreto! Não clique!
+          🦦
         </button>
       ) : (
         <div className="text-center">
           <h1 className="text-2xl font-bold text-green-500">🎉 Feliz aniversario! 🎉</h1>
-          <p className="text-lg mt-2">Eu te amo muito🦦❤️!</p>
+          <p className="text-lg mt-2">Eu te amo muito 🦦❤️!</p>
         </div>
       )}
     </div>
