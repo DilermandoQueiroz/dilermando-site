@@ -45,8 +45,8 @@ export default function Home() {
         </button>
       ) : (
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-green-500">🎉 Parabéns! 🎉</h1>
-          <p className="text-lg mt-2">Você conseguiu clicar no botão secreto!</p>
+          <h1 className="text-2xl font-bold text-green-500">🎉 Feliz aniversario! 🎉</h1>
+          <p className="text-lg mt-2">Eu te amo muito🦦❤️!</p>
         </div>
       )}
     </div>
