@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 export default function Home() {
   const [position, setPosition] = useState({ left: 50, top: 50 });
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [dateAnswer, setDateAnswer] = useState("");
 
   useEffect(() => {
