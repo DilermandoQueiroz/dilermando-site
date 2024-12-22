@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 export default function Home() {
   const [position, setPosition] = useState({ left: 50, top: 50 });
-  const [step, setStep] = useState(3);
+  const [step, setStep] = useState(0);
   const [dateAnswer, setDateAnswer] = useState("");
   const [starCode, setStarCode] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -203,7 +203,7 @@ export default function Home() {
        <Game
         starName={starInfo.name}
         constellation={starInfo.constellation}
-        starDistance={starInfo.distance_light_year * 10}
+        starDistance={starInfo.distance_light_year * 100}
        />
       )}
     </div>
