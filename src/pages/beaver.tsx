@@ -7,7 +7,18 @@ export default function Home() {
   const [dateAnswer, setDateAnswer] = useState("");
   const [starCode, setStarCode] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [starInfo, setStarInfo] = useState(null);
+  interface StarInfo {
+    name: string;
+    constellation: string;
+    right_ascension: string;
+    declination: string;
+    apparent_magnitude: number;
+    absolute_magnitude: number;
+    distance_light_year: number;
+    spectral_class: string;
+  }
+
+  const [starInfo, setStarInfo] = useState<StarInfo | null>(null);
 
   useEffect(() => {
     if (step === 0) {
@@ -21,7 +32,7 @@ export default function Home() {
     }
   }, [step]);
 
-  const handleFetch = async (url, options, onSuccess, onError) => {
+  const handleFetch = async (url: string | URL | Request, options: RequestInit | undefined, onSuccess: { (data: any): void; (arg0: any): void; }, onError: { (error: any): void; (arg0: string): void; }) => {
     try {
       const response = await fetch(url, options);
       if (response.ok) {
@@ -31,7 +42,7 @@ export default function Home() {
         const error = await response.text();
         onError(error);
       }
-    } catch (error) {
+    } catch (error: any) {
       onError(error.message);
     }
   };
@@ -155,11 +166,11 @@ export default function Home() {
        <div className="text-center">
           <h1 className="text-2xl font-bold">Prepare-se para a jornada! 🚀🌌</h1>
           <p className="text-lg mt-4">
-            A distância entre a Terra 🌍 e a estrela <strong>{starInfo.name}</strong> na constelação <strong>{starInfo.constellation}</strong> é de 
-            <strong> {starInfo.distance_light_year} anos-luz</strong>! ✨
+            A distância entre a Terra 🌍 e a estrela <strong>{starInfo?.name}</strong> na constelação <strong>{starInfo?.constellation}</strong> é de 
+            <strong> {starInfo?.distance_light_year} anos-luz</strong>! ✨
           </p>
           <p className="mt-2 text-lg font-semibold">
-            A magnitude aparente da estrela é de <strong>{starInfo.apparent_magnitude}</strong>! 🌟
+            A magnitude aparente da estrela é de <strong>{starInfo?.apparent_magnitude}</strong>! 🌟
           </p>
           <p className="mt-2 text-lg font-semibold">
             🌟 Guarde essa informação, você precisará dela depois! 🔭
@@ -199,7 +210,7 @@ export default function Home() {
         </div>
       </div>
       )}
-      {step === 8 && (
+      {step === 8 && starInfo && (
        <Game
         starName={starInfo.name}
         constellation={starInfo.constellation}

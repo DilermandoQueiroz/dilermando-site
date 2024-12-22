@@ -1,19 +1,38 @@
 import { useState, useEffect, useRef } from "react";
 
-export function Game({ starName, constellation, starDistance }) {
+interface GameProps {
+  starName: string;
+  constellation: string;
+  starDistance: number;
+}
+
+export function Game({ starName, constellation, starDistance }: GameProps) {
   const [rocketPosition, setRocketPosition] = useState({ x: 300, y: 400 });
-  const [asteroids, setAsteroids] = useState([]);
-  const [decorations, setDecorations] = useState([]);
+  interface Asteroid {
+    id: number;
+    x: number;
+    y: number;
+  }
+  
+  const [asteroids, setAsteroids] = useState<Asteroid[]>([]);
+  interface Decoration {
+    id: number;
+    x: number;
+    y: number;
+    type: string;
+  }
+  
+  const [decorations, setDecorations] = useState<Decoration[]>([]);
   const [distance, setDistance] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isWin, setIsWin] = useState(false);
   const [isProposal, setIsProposal] = useState(false);
-  const [proposalAccepted, setProposalAccepted] = useState(null);
+  const [proposalAccepted, setProposalAccepted] = useState<boolean | null>(null);
   const [showStory, setShowStory] = useState(false);
   const [isFreeMode, setIsFreeMode] = useState(false);
   const [showOfficialMessage, setShowOfficialMessage] = useState(false); // Controle da mensagem oficial de namoro
-  const keysPressed = useRef({});
-  const animationFrame = useRef(null);
+  const keysPressed = useRef<{ [key: string]: boolean }>({});
+  const animationFrame = useRef<number | null>(null);
   const gameAreaRef = useRef(null);
   const [showBlackScreen, setShowBlackScreen] = useState(false);
 
@@ -119,7 +138,11 @@ export function Game({ starName, constellation, starDistance }) {
     };
 
     animationFrame.current = requestAnimationFrame(updateGame);
-    return () => cancelAnimationFrame(animationFrame.current);
+    return () => {
+      if (animationFrame.current !== null) {
+        cancelAnimationFrame(animationFrame.current);
+      }
+    };
   }, [isGameOver, isWin, isFreeMode, asteroids]);
 
   useEffect(() => {
@@ -132,11 +155,11 @@ export function Game({ starName, constellation, starDistance }) {
   }, [isGameOver]);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: { key: string; }) => {
       keysPressed.current[event.key.toLowerCase()] = true;
     };
 
-    const handleKeyUp = (event) => {
+    const handleKeyUp = (event: { key: string; }) => {
       keysPressed.current[event.key.toLowerCase()] = false;
     };
 
