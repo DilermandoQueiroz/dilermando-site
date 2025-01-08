@@ -1,222 +1,147 @@
-import { Game } from "@/components/beaver/game";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export default function Home() {
-  const [position, setPosition] = useState({ left: 50, top: 50 });
-  const [step, setStep] = useState(0);
-  const [dateAnswer, setDateAnswer] = useState("");
-  const [starCode, setStarCode] = useState("");
-  const [feedback, setFeedback] = useState("");
-  interface StarInfo {
-    name: string;
-    constellation: string;
-    right_ascension: string;
-    declination: string;
-    apparent_magnitude: number;
-    absolute_magnitude: number;
-    distance_light_year: number;
-    spectral_class: string;
-  }
+const HomePage = () => {
+  const [senha, setSenha] = useState('');
+  const [erro, setErro] = useState('');
+  const [autenticado, setAutenticado] = useState(false);
+  const [tempoDecorrido, setTempoDecorrido] = useState('');
 
-  const [starInfo, setStarInfo] = useState<StarInfo | null>(null);
+  // Data inicial para começar a contagem
+  const dataInicial = new Date('2025-01-06T20:49:30.953Z'); // Data do namoro
+
+  // Função para calcular a diferença entre as datas em anos, meses, dias, horas, minutos e segundos
+  const calcularTempoDecorrido = (dataInicial: Date) => {
+    const agora = new Date();
+    const diferença = agora.getTime() - dataInicial.getTime(); // Diferença em milissegundos
+
+    // Calculando anos, meses e dias
+    const anos = Math.floor(diferença / (1000 * 60 * 60 * 24 * 365));
+    const meses = Math.floor((diferença % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+    const dias = Math.floor((diferença % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+
+    // Calculando horas, minutos e segundos
+    const horas = Math.floor((diferença % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutos = Math.floor((diferença % (1000 * 60 * 60)) / (1000 * 60));
+    const segundos = Math.floor((diferença % (1000 * 60)) / 1000);
+
+    // Condicionando a exibição
+    let tempo = '';
+
+    if (anos > 0) tempo += `${anos} ano(s) `;
+    if (meses > 0) tempo += `${meses} mês(es) `;
+    if (dias > 0) tempo += `${dias} dia(s) `;
+    tempo += `${horas}h ${minutos}m ${segundos}s`;
+
+    return tempo;
+  };
 
   useEffect(() => {
-    if (step === 0) {
-      const interval = setInterval(() => {
-        setPosition({
-          left: Math.random() * (window.innerWidth - 80),
-          top: Math.random() * (window.innerHeight - 80),
-        });
-      }, 300);
-      return () => clearInterval(interval);
-    }
-  }, [step]);
+    if (autenticado) {
+      const intervalo = setInterval(() => {
+        const tempo = calcularTempoDecorrido(dataInicial);
+        setTempoDecorrido(tempo);
+      }, 1000);
 
-  const handleFetch = async (url: string | URL | Request, options: RequestInit | undefined, onSuccess: { (data: any): void; (arg0: any): void; }, onError: { (error: any): void; (arg0: string): void; }) => {
-    try {
-      const response = await fetch(url, options);
-      if (response.ok) {
-        const data = await response.json();
-        onSuccess(data);
-      } else {
-        const error = await response.text();
-        onError(error);
+      return () => clearInterval(intervalo); // Limpa o intervalo quando o componente for desmontado
+    }
+  }, [autenticado]);
+
+  const [rocketPosition, setRocketPosition] = useState({ x: 300, y: 400 });
+  const keysPressed = useRef<{ [key: string]: boolean }>({});
+  const animationFrame = useRef<number | null>(null);
+
+  useEffect(() => {
+    const updateGame = () => {
+      setRocketPosition((prev) => {
+        let { x, y } = prev;
+        if (keysPressed.current["w"]) y = Math.max(y - 5, 0);
+        if (keysPressed.current["s"]) y = Math.min(y + 5, window.innerHeight - 100);
+        if (keysPressed.current["a"]) x = Math.max(x - 5, 0);
+        if (keysPressed.current["d"]) x = Math.min(x + 5, window.innerWidth - 100);
+        return { x, y };
+      });
+
+      animationFrame.current = requestAnimationFrame(updateGame);
+    };
+
+    animationFrame.current = requestAnimationFrame(updateGame);
+
+    return () => {
+      if (animationFrame.current !== null) {
+        cancelAnimationFrame(animationFrame.current);
       }
-    } catch (error: any) {
-      onError(error.message);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: { key: string }) => {
+      keysPressed.current[event.key.toLowerCase()] = true;
+    };
+
+    const handleKeyUp = (event: { key: string }) => {
+      keysPressed.current[event.key.toLowerCase()] = false;
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    if (senha === '11.05') {
+      setAutenticado(true); // Usuário autenticado, exibe a contagem
+    } else {
+      setErro('Senha incorreta!');
     }
   };
-
-  const fetchStarInfo = () => {
-    if (!starCode) {
-      setFeedback("Por favor, insira um código de estrela válido.");
-      return;
-    }
-  
-    handleFetch(
-      `https://api.api-ninjas.com/v1/stars?name=${starCode}`,
-      { method: "GET", headers: { "X-Api-Key": "RQOEsW++tV9j7t6gWLcpTA==sZF5F9ovzE8yxIIz" } },
-      (data) => {
-        if (!data || data.length === 0) {
-          setFeedback("Nome da estrela está incorreto. Por favor, tente novamente.");
-          return;
-        }
-  
-        const starDetails = data[0];
-        setStarInfo(starDetails);
-  
-        // Salvar as informações da estrela no localStorage
-        localStorage.setItem(
-          "starInfo",
-          JSON.stringify({
-            name: starDetails.name,
-            magnitude: starDetails.apparent_magnitude,
-            constellation: starDetails.constellation,
-            distance: starDetails.distance_light_year,
-            timestamp: new Date().toISOString(),
-          })
-        );
-        console.log("Informações da estrela salvas no localStorage.");
-        console.log(starDetails);
-        console.log(new Date().toISOString())
-        setStep(5);
-      },
-      (error) => setFeedback(`Erro ao buscar informações da estrela: ${error}`)
-    );
-  };
-
 
   return (
-    <div className="w-screen h-screen flex items-center justify-center bg-gray-100 relative overflow-hidden">
-      {step === 0 && (
-        <button
-          onClick={() => setStep(1)}
-          className="absolute text-4xl"
-          style={{ left: `${position.left}px`, top: `${position.top}px`, background: "none", border: "none", cursor: "pointer" }}
-        >
-          🦦
-        </button>
-      )}
-      {step === 1 && (
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Você é a Loris?</h1>
-          <button onClick={() => setStep(2)} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Sim</button>
-        </div>
-      )}
-      {step === 2 && (
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Qual foi a data em que tiramos fotos da lua em Guará usando o telescópio?</h1>
-          <input
-            type="date"
-            value={dateAnswer}
-            onChange={(e) => setDateAnswer(e.target.value)}
-            className="mt-4 p-2 border rounded"
-          />
-          <button onClick={() => setStep(dateAnswer === "2024-09-14" ? 3 : 4)} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">Confirmar</button>
-        </div>
-      )}
-      {step === 3 && (
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">Escolha uma estrela 🌟</h1>
-          <p className="text-lg mt-2">Insira o nome da estrela que você escolheu:</p>
-          <input
-            type="text"
-            value={starCode}
-            onChange={(e) => setStarCode(e.target.value)}
-            placeholder="Nome da estrela"
-            className="mt-4 p-2 border rounded"
-          />
-          <button onClick={fetchStarInfo} className="ml-2 mt-4 px-4 py-2 bg-blue-500 text-white rounded">Buscar</button>
-          {feedback && <p className="text-sm mt-2">{feedback}</p>}
-        </div>
-      )}
-      {step === 4 && (
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-500">Você não é a Loris! 😡</h1>
-        </div>
-      )}
-      {step === 5 && (
-        <div className="text-center">
-        <h1 className="text-2xl font-bold">Estamos na Terra 🌍</h1>
-        {starInfo && (
-          <>
-            <p className="text-lg mt-2">
-              Vamos viajar para a estrela <strong>{starInfo.name}</strong>!
-            </p>
-            <div className="mt-4 p-4 bg-white shadow rounded text-left">
-              <h2 className="text-xl font-bold">Informações da Estrela:</h2>
-              <p><strong>Constelação:</strong> {starInfo.constellation}</p>
-              <p><strong>Ascensão Reta:</strong> {starInfo.right_ascension}</p>
-              <p><strong>Declinação:</strong> {starInfo.declination}</p>
-              <p><strong>Magnitude Aparente:</strong> {starInfo.apparent_magnitude}</p>
-              <p><strong>Magnitude Absoluta:</strong> {starInfo.absolute_magnitude}</p>
-              <p><strong>Distância (anos-luz):</strong> {starInfo.distance_light_year}</p>
-              <p><strong>Classe Espectral:</strong> {starInfo.spectral_class}</p>
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      {!autenticado ? (
+        <>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <input
+                type="password"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                placeholder="Digite a senha"
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-          </>
-        )}
-        <p className="mt-4">Você quer viajar comigo para ver essa estrela?</p>
-        <div className="mt-4">
-          <button onClick={() => setStep(6)} className="mr-2 px-4 py-2 bg-blue-500 text-white rounded">Sim</button>
-          <button onClick={() => setStep(7)} className="ml-2 px-4 py-2 bg-red-500 text-white rounded">Não</button>
-        </div>
-      </div>
-      )}
-      {step === 6 && (
-       <div className="text-center">
-          <h1 className="text-2xl font-bold">Prepare-se para a jornada! 🚀🌌</h1>
-          <p className="text-lg mt-4">
-            A distância entre a Terra 🌍 e a estrela <strong>{starInfo?.name}</strong> na constelação <strong>{starInfo?.constellation}</strong> é de 
-            <strong> {starInfo?.distance_light_year} anos-luz</strong>! ✨
-          </p>
-          <p className="mt-2 text-lg font-semibold">
-            A magnitude aparente da estrela é de <strong>{starInfo?.apparent_magnitude}</strong>! 🌟
-          </p>
-          <p className="mt-2 text-lg font-semibold">
-            🌟 Guarde essa informação, você precisará dela depois! 🔭
-          </p>
-          <button
-            onClick={() => setStep(8)}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            🚀
-          </button>
-        </div>
-      )}
-      {step === 7 && (
-        <div className="text-center">
-        <h1 className="text-2xl font-bold">Estamos na Terra 🌍</h1>
-        {starInfo && (
-          <>
-            <p className="text-lg mt-2">
-              Vamos viajar para a estrela <strong>{starInfo.name}</strong>!
-            </p>
-            <div className="mt-4 p-4 bg-white shadow rounded text-left">
-              <h2 className="text-xl font-bold">Informações da Estrela:</h2>
-              <p><strong>Constelação:</strong> {starInfo.constellation}</p>
-              <p><strong>Ascensão Reta:</strong> {starInfo.right_ascension}</p>
-              <p><strong>Declinação:</strong> {starInfo.declination}</p>
-              <p><strong>Magnitude Aparente:</strong> {starInfo.apparent_magnitude}</p>
-              <p><strong>Magnitude Absoluta:</strong> {starInfo.absolute_magnitude}</p>
-              <p><strong>Distância (anos-luz):</strong> {starInfo.distance_light_year}</p>
-              <p><strong>Classe Espectral:</strong> {starInfo.spectral_class}</p>
+            <button
+              type="submit"
+              className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Entrar
+            </button>
+          </form>
+          {erro && <p className="text-red-600 text-center mt-2">{erro}</p>}
+        </>
+      ) : (
+        <>
+          <div>
+            <span className="text-3xl">{tempoDecorrido}</span>
+            <div
+              className="absolute text-7xl"
+              style={{
+                left: `${rocketPosition.x}px`,
+                top: `${rocketPosition.y}px`,
+              }}
+            >
+              🚀
             </div>
-          </>
-        )}
-        <p className="mt-4">Você quer viajar comigo para ver essa estrela?</p>
-        <div className="mt-4">
-          <button onClick={() => setStep(6)} className="mr-2 px-4 py-2 bg-blue-500 text-white rounded">Sim</button>
-          <button onClick={() => setStep(6)} className="mr-2 px-4 py-2 bg-blue-500 text-white rounded">Sim</button>
-        </div>
-      </div>
-      )}
-      {step === 8 && starInfo && (
-       <Game
-        starName={starInfo.name}
-        constellation={starInfo.constellation}
-        starDistance={starInfo.distance_light_year * 100}
-       />
+          </div>
+        </>
       )}
     </div>
   );
-}
+};
+
+export default HomePage;
